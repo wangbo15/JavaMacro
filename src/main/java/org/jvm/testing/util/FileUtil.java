@@ -184,4 +184,33 @@ public class FileUtil {
         }
         return true;
     }
+
+    public static String removeExtension(final String s)
+    {
+        return s != null && s.lastIndexOf(".") > 0 ? s.substring(0, s.lastIndexOf(".")) : s;
+    }
+
+
+    public static void createDir(String path){
+        File theDir = new File(path);
+        if (!theDir.exists()){
+            theDir.mkdirs();
+        }
+    }
+    public static void clearTestFiles(List<File> files) {
+        for (File f: files) {
+            File parent = new File(f.getParent());
+            if(parent.exists()){
+                deleteFile(parent);
+            }
+        }
+    }
+    public static void deleteFile(File element) {
+        if (element.isDirectory()) {
+            for (File sub : element.listFiles()) {
+                deleteFile(sub);
+            }
+        }
+        element.delete();
+    }
 }

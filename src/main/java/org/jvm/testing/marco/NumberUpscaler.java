@@ -1,5 +1,6 @@
 package org.jvm.testing.marco;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.BadLocationException;
@@ -12,18 +13,18 @@ import java.util.*;
 
 public class NumberUpscaler implements Macro {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws CoreException {
         String filePath = "/home/nightwish/workspace/compiler/testing/JavaMacro/Tests/src/main/java/org/example/Main.java";
         String fileUtilSrc = FileUtil.readFileToString(filePath);
         final CompilationUnit cu = (CompilationUnit) JdtUtil.genASTFromSource(fileUtilSrc, "1.7", ASTParser.K_COMPILATION_UNIT);
 
         NumberUpscaler nu = new NumberUpscaler();
-        System.out.println(nu.apply(cu, fileUtilSrc));
+        System.out.println(nu.apply(cu, fileUtilSrc, new Random()));
     }
 
 
     @Override
-    public String apply(CompilationUnit cu, String src) {
+    public String apply(CompilationUnit cu, String src, Random rand) {
         final List<VariableDeclarationStatement> declStmts = new ArrayList<>();
         final List<SingleVariableDeclaration> singleDecls = new ArrayList<>();
         final Set<String> variableNames = new HashSet<>();
@@ -89,5 +90,10 @@ public class NumberUpscaler implements Macro {
             e.printStackTrace();
         }
         return res;
+    }
+
+    @Override
+    public boolean isMacroApplicable(String src) {
+        return src.matches(".*\\d.*");
     }
 }

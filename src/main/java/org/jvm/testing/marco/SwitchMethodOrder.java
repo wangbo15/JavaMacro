@@ -8,10 +8,12 @@ import org.eclipse.text.edits.TextEdit;
 import org.jvm.testing.util.FileUtil;
 import org.jvm.testing.util.JdtUtil;
 
+import java.util.Random;
+
 public class SwitchMethodOrder implements Macro {
 
     @Override
-    public String apply(CompilationUnit cu, String src) {
+    public String apply(CompilationUnit cu, String src, Random rand) {
         ASTRewrite rewriter = ASTRewrite.create(cu.getAST());
         final TypeDeclaration[] td = new TypeDeclaration[1];
         cu.accept(new ASTVisitor() {
@@ -40,5 +42,9 @@ public class SwitchMethodOrder implements Macro {
             e.printStackTrace();
         }
         return res;
+    }
+    @Override
+    public boolean isMacroApplicable(String src) {
+        return true;
     }
 }

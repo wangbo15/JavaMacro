@@ -10,11 +10,12 @@ import org.jvm.testing.util.FileUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ExchangeOrderForCommutatives implements Macro {
 
     @Override
-    public String apply(CompilationUnit cu, String src) {
+    public String apply(CompilationUnit cu, String src, Random rand) {
         final List<InfixExpression> commutativeExpressions = new ArrayList<>();
         cu.accept(new ASTVisitor() {
             @Override
@@ -50,5 +51,9 @@ public class ExchangeOrderForCommutatives implements Macro {
         }
 
         return res;
+    }
+    @Override
+    public boolean isMacroApplicable(String src) {
+        return true;
     }
 }

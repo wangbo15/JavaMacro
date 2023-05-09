@@ -7,6 +7,7 @@ import org.jvm.testing.util.FileUtil;
 import org.jvm.testing.util.JdtUtil;
 
 import java.io.File;
+import java.util.Random;
 
 public class DuplicatedPutInsertionTest {
 
@@ -19,6 +20,6 @@ public class DuplicatedPutInsertionTest {
         final CompilationUnit cu = (CompilationUnit) JdtUtil.genASTFromSource(fileUtilSrc, name, "1.7", ASTParser.K_COMPILATION_UNIT);
 
         DuplicatedPutInsertion di = new DuplicatedPutInsertion();
-        System.out.println(di.apply(cu, fileUtilSrc));
+        System.out.println(di.apply(cu, fileUtilSrc, new Random()));
     }
 }

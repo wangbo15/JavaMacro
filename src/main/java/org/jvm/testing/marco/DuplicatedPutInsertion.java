@@ -7,10 +7,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.TextEdit;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class DuplicatedPutInsertion implements Macro {
     public static final Set<String> MAP_TYPES = new HashSet<>();
@@ -26,7 +23,7 @@ public class DuplicatedPutInsertion implements Macro {
     }
 
     @Override
-    public String apply(CompilationUnit cu, String src) {
+    public String apply(CompilationUnit cu, String src, Random rand) {
         ASTRewrite rewriter = ASTRewrite.create(cu.getAST());
 
         final List<Statement> statements = new ArrayList<>();
@@ -73,5 +70,10 @@ public class DuplicatedPutInsertion implements Macro {
         }
 
         return res;
+    }
+
+    @Override
+    public boolean isMacroApplicable(String src) {
+        return src.contains(".put(");
     }
 }
