@@ -23,7 +23,7 @@ public class Main {
 
 
     public static void main(String[] args) {
-    	System.out.println("Strarting Macros!!!");
+        System.out.println("Strarting Macros!!!");
         Random rand = new Random();
 
 //        String testRoot = "/home/nightwish/workspace/compiler/jvm/jdk/test/hotspot/jtreg";
@@ -31,7 +31,7 @@ public class Main {
 //        String testRoot = "/home/admin1/Desktop/hello10/HelloWorld4.java";
         //String testRoot = "/home/admin1/Downloads/jdk-jdk-20-34/test/langtools/tools/javac/BadOptimization/Switch1.java";
         String testRoot = "/home/admin1/Downloads/jdk-jdk-20-34/test/langtools/tools/javac/BadOptimization";
- //       String testRoot = jdkTestFolder;
+        //       String testRoot = jdkTestFolder;
 
         //String testRoot = "/home/admin1/Downloads/jdk-jdk-20-34/test/langtools/tools/javac";
         //String testRoot = "/home/admin1/Desktop/hello10";
@@ -78,60 +78,64 @@ public class Main {
 //        macros.add(new SwitchMethodOrder());
 //        macros.add(new DuplicatedPutInsertion());
 //        macros.add(new AddSwitchCase());
-        //macros.add(new AddSwitchLabels());
-       // macros.add(new AddSwitchCaseGuard());
-        macros.add(new AddRecords());
+        // macros.add(new AddSwitchLabels());
+        // macros.add(new AddSwitchCaseGuard());
+        // macros.add(new AddRecords());
+        // macros.add(new ReplaceSwitchCaseRepresentation());
+        // macros.add(new AddVarsToRecords());
+        // macros.add(new AddMethodsToRecords());
+        macros.add(new AddModifiersToRecords());
         return macros;
     }
 
     private static boolean applyMacro(File file, Random rand, ArrayList<File> outputFiles) {
 //        try {
-            boolean anyMacroApplicable = false;
-            System.out.println(">>>> Processing " + file.getAbsolutePath());
-            String oriSrc = FileUtil.readFileToString(file);
-            String unitName = FileUtil.getUnitName(file);
+        boolean anyMacroApplicable = false;
+        System.out.println(">>>> Processing " + file.getAbsolutePath());
+        String oriSrc = FileUtil.readFileToString(file);
+        String unitName = FileUtil.getUnitName(file);
 
-            List<Macro> macros = activatedMacros();
+        List<Macro> macros = activatedMacros();
 
-            String currSrc = oriSrc;
-            for (Macro macro: macros) {
-                if(!macro.isMacroApplicable(oriSrc)){
-                    System.out.println("Macro not applicable");
-                    continue;
-                }
-                else
-                {
-                    anyMacroApplicable = true;
-                }
-                CompilationUnit cu;
-                try {
-                    cu = (CompilationUnit) JdtUtil.genASTFromSource(currSrc, unitName, JavaCore.VERSION_20, ASTParser.K_COMPILATION_UNIT);
-                }
-                catch (Exception e){
-                    System.err.println(e);
-                    anyMacroApplicable = false;
-                    break;
-                }
-                System.out.println("CU Length"+cu.getLength());
-                for (var p:cu.getProblems()) {
-                    System.out.println(p.getMessage() + " at Line "+p.getSourceLineNumber());
-                }
-                currSrc = macro.apply(cu, currSrc,rand);
-                System.out.println(currSrc);
+        String currSrc = oriSrc;
+        for (Macro macro: macros) {
+            if(!macro.isMacroApplicable(oriSrc)){
+                System.out.println("Macro not applicable");
+                continue;
             }
-            if(anyMacroApplicable) {
-                String outputPath = file.getAbsolutePath();
-                if (!modifyOriginalSource) {
-                    outputPath = file.getParent() + outputFoler + "/" + file.getName();
-                }
-                if(!oriSrc.equals(currSrc)) {
-                    FileUtil.writeStringToFile(new File(outputPath), currSrc, false);
-                    outputFiles.add(new File(outputPath));
-                }
-                //System.out.println(currSrc);
-                System.out.println(">>>> END");
+            else
+            {
+                anyMacroApplicable = true;
             }
-            return anyMacroApplicable;
+            CompilationUnit cu;
+            try {
+                cu = (CompilationUnit) JdtUtil.genASTFromSource(currSrc, unitName, JavaCore.VERSION_20, ASTParser.K_COMPILATION_UNIT);
+            }
+            catch (Exception e){
+                System.err.println(e);
+                anyMacroApplicable = false;
+                break;
+            }
+            System.out.println("CU Length"+cu.getLength());
+            for (var p:cu.getProblems()) {
+                System.out.println(p.getMessage() + " at Line "+p.getSourceLineNumber());
+            }
+            currSrc = macro.apply(cu, currSrc,rand);
+            System.out.println(currSrc);
+        }
+        if(anyMacroApplicable) {
+            String outputPath = file.getAbsolutePath();
+            if (!modifyOriginalSource) {
+                outputPath = file.getParent() + outputFoler + "/" + file.getName();
+            }
+            if(!oriSrc.equals(currSrc)) {
+                FileUtil.writeStringToFile(new File(outputPath), currSrc, false);
+                outputFiles.add(new File(outputPath));
+            }
+            //System.out.println(currSrc);
+            System.out.println(">>>> END");
+        }
+        return anyMacroApplicable;
 
 //       } catch (Exception e) {
 //            e.printStackTrace();

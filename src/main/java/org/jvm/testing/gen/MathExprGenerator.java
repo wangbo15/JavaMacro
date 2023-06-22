@@ -241,6 +241,7 @@ System.out.println("ret: "+ret);
             VariableDeclarationExpression sde = a.newVariableDeclarationExpression(fragment);
             sde.setType(a.newPrimitiveType(PrimitiveType.toCode(type)));
 
+
             var sd = a.newSingleVariableDeclaration();
             sd.setName(a.newSimpleName(name));
             sd.setType(a.newPrimitiveType(PrimitiveType.toCode(type)));

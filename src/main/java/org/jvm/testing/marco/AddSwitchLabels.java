@@ -32,7 +32,10 @@ public class AddSwitchLabels implements Macro {
             ListRewrite listRewrite= rewrite.getListRewrite(s, SwitchCase.EXPRESSIONS2_PROPERTY);
             //ListRewrite listRewrite= rewrite.getListRewrite(s, SwitchStatement.STATEMENTS_PROPERTY);
 
-            String switchType = ((SwitchStatement)s.getParent()).getExpression().resolveTypeBinding().getName();
+            String switchType = "";
+            if(((SwitchStatement)s.getParent()).getExpression().resolveTypeBinding() != null) {
+                switchType = ((SwitchStatement)s.getParent()).getExpression().resolveTypeBinding().getName();
+            }
 
             if(s.isDefault()){
                 continue;
