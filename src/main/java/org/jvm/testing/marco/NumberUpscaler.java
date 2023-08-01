@@ -94,6 +94,7 @@ public class NumberUpscaler implements Macro {
 
     @Override
     public boolean isMacroApplicable(String src) {
-        return src.matches(".*\\d.*");
+        //return src.matches(".*\\d.*");
+        return true;
     }
 }

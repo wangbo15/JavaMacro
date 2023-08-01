@@ -1,5 +1,6 @@
 package org.jvm.testing.main;
 
+import org.apache.felix.gogo.runtime.Parser;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -16,31 +17,51 @@ import java.util.Random;
 
 public class Main {
 
-    public static boolean modifyOriginalSource = true;
+    public static boolean jdkTestMode = true;
+
+    public static boolean modifyOriginalSource = false;
     public static String outputFoler = "/modified";
     public static String jdkTestFolder = "/home/admin1/Downloads/jdk-jdk-20-34/test/langtools/tools/javac/";
 
-
+    public static void mainsdf(String[] args) {
+        ASTNode e = JdtUtil.genASTFromSource("new Int[]{1,2,3}", "expression", JavaCore.VERSION_20, ASTParser.K_EXPRESSION);
+        System.out.println("class:"+e.getClass());
+        ArrayCreation ac = (ArrayCreation) e;
+        System.out.println(ac.getInitializer().getClass());
+        System.out.println(((ArrayInitializer)ac.getInitializer()).expressions().get(0));
+        System.out.println(ac.getType());
+        System.out.println(ac.getType().getElementType().getClass());
+        System.out.println(ac.getAST());
+    }
 
     public static void main(String[] args) {
+
         System.out.println("Strarting Macros!!!");
         Random rand = new Random();
 
 //        String testRoot = "/home/nightwish/workspace/compiler/jvm/jdk/test/hotspot/jtreg";
 //        String testRoot = "./Tests/src/main/java";
-//        String testRoot = "/home/admin1/Desktop/hello10/HelloWorld4.java";
+       String testRoot = "/home/admin1/Desktop/hello10/HelloWorld3.java";
         //String testRoot = "/home/admin1/Downloads/jdk-jdk-20-34/test/langtools/tools/javac/BadOptimization/Switch1.java";
-        String testRoot = "/home/admin1/Downloads/jdk-jdk-20-34/test/langtools/tools/javac/BadOptimization";
+        //String testRoot = "/home/admin1/Downloads/jdk-jdk-20-34/test/langtools/tools/javac/BadOptimization";
         //       String testRoot = jdkTestFolder;
 
         //String testRoot = "/home/admin1/Downloads/jdk-jdk-20-34/test/langtools/tools/javac";
+      //  String testRoot = "/home/admin1/Downloads/jdk-jdk-20-34/test";
         //String testRoot = "/home/admin1/Desktop/hello10";
+
+        if(jdkTestMode){
+            modifyOriginalSource = true;
+            testRoot = "/home/admin1/Downloads/jdk-jdk-20-34/test";//langtools/tools/javac";
+        }
         List<File> tests = new ArrayList<>(1000);
 
         //FileUtil.createDir(testRoot+outputFoler);
 
+        long start = System.currentTimeMillis();
         FileUtil.getFileList(testRoot, tests, ".java");
         ArrayList<File> outputFiles = new ArrayList<>();
+
         int time = 0;
         for (File file : tests) {
             String src = FileUtil.readFileToString(file);
@@ -52,7 +73,9 @@ public class Main {
             if (time > 500)
                 break;
         }
-
+        long elapsedTimeMillis = System.currentTimeMillis()-start;
+        float elapsedTimeSec = elapsedTimeMillis/1000F;
+        System.out.println("applyMacro time" + elapsedTimeSec);
 
 //        outputFiles.add(new File("/home/admin1/Downloads/jdk-jdk-20-34/test/langtools/tools/javac/BadOptimization/modified/Switch1.java"));
 //        outputFiles.add(new File("/home/admin1/Downloads/jdk-jdk-20-34/test/langtools/tools/javac/BadOptimization/modified/Switch2.java"));
@@ -60,9 +83,19 @@ public class Main {
         //applyMacro(new File("/home/admin1/Downloads/jdk-jdk-20-34/test/langtools/tools/javac/BadOptimization/Switch1.java"),rand);
         //String res = TestUtil.runJDKTests("/home/admin1/Downloads/jdk-jdk-20-34/test/langtools/tools/javac/BadOptimization/modified/Switch1.java");
 
+        System.out.println("Applicable Test Number: "+ outputFiles.size());
 
-        String res = TestUtil.runJDKTests(outputFiles);
-        System.out.println(res);
+        if(jdkTestMode) {
+            start = System.currentTimeMillis();
+            String res = TestUtil.runJDKTests(outputFiles);
+            System.out.println(res);
+            elapsedTimeMillis = System.currentTimeMillis() - start;
+            elapsedTimeSec = elapsedTimeMillis / 1000F;
+            System.out.println("testing time" + elapsedTimeSec);
+        }
+
+
+
 
 //        if(!modifyOriginalSource) {
 //            FileUtil.clearTestFiles(outputFiles);
@@ -73,18 +106,26 @@ public class Main {
 
     private static List<Macro> activatedMacros() {
         List<Macro> macros = new ArrayList<>();
-//        macros.add(new NumberUpscaler());
-//        macros.add(new ExchangeOrderForCommutatives());
-//        macros.add(new SwitchMethodOrder());
-//        macros.add(new DuplicatedPutInsertion());
-//        macros.add(new AddSwitchCase());
-        // macros.add(new AddSwitchLabels());
-        // macros.add(new AddSwitchCaseGuard());
-        // macros.add(new AddRecords());
-        // macros.add(new ReplaceSwitchCaseRepresentation());
-        // macros.add(new AddVarsToRecords());
-        // macros.add(new AddMethodsToRecords());
-        macros.add(new AddModifiersToRecords());
+ //       macros.add(new NumberUpscaler());
+      //  macros.add(new ExchangeOrderForCommutatives());
+ //       macros.add(new SwitchMethodOrder());
+ //       macros.add(new DuplicatedPutInsertion());
+        //macros.add(new AddSwitchCase());
+        //macros.add(new AddSwitchLabels());
+ //       macros.add(new AddSwitchCaseGuard());
+ //        macros.add(new AddRecords());
+ //       macros.add(new ReplaceSwitchCaseRepresentation());
+ //         macros.add(new AddVarsToRecords());
+  //       macros.add(new AddMethodsToRecords());
+ //       macros.add(new AddModifiersToRecords());
+ //       macros.add(new AddVectorApiRepresentation());
+ //      macros.add(new ReplaceLongWithVectorApiRepresentation());
+ //       macros.add(new ReplaceIntWithVectorApiRepresentation());
+ //     macros.add(new ReplaceFloatWithVectorApiRepresentation());
+ //       macros.add(new ReplaceDoubleWithVectorApiRepresentation());
+  //      macros.add(new ReplaceShortWithVectorApiRepresentation());
+   //     macros.add(new ReplaceByteWithVectorApiRepresentation());
+        macros.add(new AddNullSwitchCase());
         return macros;
     }
 

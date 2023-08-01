@@ -35,7 +35,10 @@ public class ReplaceSwitchCaseRepresentation implements Macro {
             //ListRewrite listRewrite= rewrite.getListRewrite(s, SwitchStatement.STATEMENTS_PROPERTY);
 
             String switchType = "";
-            if(((SwitchStatement)s.getParent()).getExpression().resolveTypeBinding() != null) {
+            if(s.getParent() instanceof SwitchExpression){
+                continue;
+
+            }else if(((SwitchStatement)s.getParent()).getExpression().resolveTypeBinding() != null) {
                 switchType = ((SwitchStatement)s.getParent()).getExpression().resolveTypeBinding().getName();
             }
 
